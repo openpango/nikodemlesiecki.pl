@@ -132,6 +132,7 @@ export default function TravelMap({
   const data = locations && locations.length > 0 ? locations : fallbackLocations;
   const containerRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   // Fade in map
   useGSAP(
@@ -152,6 +153,37 @@ export default function TravelMap({
     { scope: containerRef }
   );
 
+  // Group locations by country for zoom-out mode
+  const renderData = React.useMemo(() => {
+    if (zoomLevel >= 2.5) {
+      // Zoomed IN: Show all specific dots
+      return data;
+    }
+
+    // Zoomed OUT: Cluster by country
+    const countryGroups: Record<string, Location[]> = {};
+    data.forEach(loc => {
+      const key = loc.country.en;
+      if (!countryGroups[key]) countryGroups[key] = [];
+      countryGroups[key].push(loc);
+    });
+
+    return Object.values(countryGroups).map(group => {
+      if (group.length === 1) return group[0];
+      
+      // Create a representative "Country" dot by averaging coordinates
+      const avgLat = group.reduce((sum, loc) => sum + loc.coordinates.lat, 0) / group.length;
+      const avgLng = group.reduce((sum, loc) => sum + loc.coordinates.lng, 0) / group.length;
+      
+      return {
+         ...group[0],
+         cityOrRegion: undefined, // Hide city name when clustered
+         description: { en: 'Multiple locations visited', pl: 'Wiele odwiedzonych miejsc' },
+         coordinates: { lat: avgLat, lng: avgLng }
+      };
+    });
+  }, [data, zoomLevel]);
+
   return (
     <section
       id="travel"
@@ -168,8 +200,12 @@ export default function TravelMap({
         <SectionHeading
           title={getTranslation(lang, 'travel_title')}
         />
+        
+        <p className="mt-4 text-sm text-text-muted max-w-xl">
+          {lang === 'pl' ? 'Przybliż mapę używając scrolla, aby zobaczyć szczegółowe lokalizacje.' : 'Scroll to zoom in and see specific cities and detailed locations.'}
+        </p>
 
-        <div className="travel-map-content relative mt-12 overflow-hidden border border-border-default bg-transparent">
+        <div className="travel-map-content relative mt-8 overflow-hidden border border-border-default bg-transparent">
           {/* Map */}
           <div className="relative h-[300px] md:h-[450px] lg:h-[500px]">
             <ComposableMap
@@ -177,9 +213,12 @@ export default function TravelMap({
                 center: [15, 50],
                 scale: 600,
               }}
-              className="h-full w-full"
+              className="h-full w-full outline-none"
             >
-              <ZoomableGroup>
+              <ZoomableGroup 
+                onMoveEnd={({ zoom }) => setZoomLevel(zoom)}
+                maxZoom={15}
+              >
                 <Geographies geography={geoUrl}>
                   {({ geographies }) =>
                     geographies.map((geo) => {
@@ -191,7 +230,7 @@ export default function TravelMap({
                           geography={geo}
                           fill={isVisited ? '#F21F3D' : '#171A33'}
                           stroke="#4B506B"
-                          strokeWidth={0.5}
+                          strokeWidth={0.5 / zoomLevel}
                           style={{
                             default: { outline: 'none' },
                             hover: {
@@ -207,26 +246,26 @@ export default function TravelMap({
                 </Geographies>
 
                 {/* Pin markers */}
-                {data.map((location, index) => (
+                {renderData.map((location, index) => (
                   <Marker
-                    key={index}
+                    key={`${location.country.en}-${location.cityOrRegion}-${index}`}
                     coordinates={[location.coordinates.lng, location.coordinates.lat]}
                   >
-                    {/* Pulse ring */}
+                    {/* Pulse ring - scaled down when zoomed to avoid giant rings */}
                     <circle
-                      r={8}
+                      r={8 / Math.max(1, zoomLevel * 0.5)}
                       fill="none"
                       stroke={location.status === 'home' ? '#FFD83D' : '#F21F3D'}
-                      strokeWidth={1.5}
+                      strokeWidth={1.5 / zoomLevel}
                       className={prefersReducedMotion() ? '' : 'animate-pulse-pin'}
                       opacity={0.6}
                     />
-                    {/* Center dot */}
+                    {/* Center dot - keep relative size based on zoom */}
                     <circle
-                      r={4}
+                      r={4 / Math.max(1, zoomLevel * 0.5)}
                       fill={location.status === 'home' ? '#FFD83D' : '#F21F3D'}
                       stroke="#07091C"
-                      strokeWidth={1.5}
+                      strokeWidth={1.5 / Math.max(1, zoomLevel * 0.5)}
                       className="cursor-pointer"
                       role="button"
                       aria-label={location.country[lang]}
@@ -262,7 +301,7 @@ export default function TravelMap({
             {/* Tooltip */}
             {tooltip && (
               <div
-                className="pointer-events-none absolute z-20 border border-border-default bg-[#090909] px-4 py-3 shadow-2xl"
+                className="pointer-events-none absolute z-20 border border-border-default bg-[#090909] px-4 py-3 shadow-2xl transition-all duration-150"
                 style={{
                   left: `${Math.min(tooltip.x, 250)}px`,
                   top: `${tooltip.y - 80}px`,
@@ -280,7 +319,7 @@ export default function TravelMap({
                 <p className="mt-1 text-xs text-text-muted">
                   {tooltip.location.description?.[lang]}
                 </p>
-                <span className="mt-1 inline-block text-[0.65rem] font-medium uppercase tracking-wider text-red-primary">
+                <span className="mt-1 inline-block text-[0.65rem] font-medium uppercase tracking-wider" style={{ color: tooltip.location.status === 'home' ? '#FFD83D' : '#FF5257' }}>
                   {tooltip.location.status === 'home'
                     ? getTranslation(lang, 'travel_home')
                     : getTranslation(lang, 'travel_visited')}
@@ -292,13 +331,13 @@ export default function TravelMap({
           {/* Legend */}
           <div className="flex items-center gap-6 border-t border-border-default px-6 py-4">
             <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-yellow-highlight" />
+              <span className="h-3 w-3 rounded-full" style={{ backgroundColor: '#FFD83D' }} />
               <span className="text-xs text-text-muted">
                 {getTranslation(lang, 'travel_home')}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-red-primary" />
+              <span className="h-3 w-3 rounded-full" style={{ backgroundColor: '#F21F3D' }} />
               <span className="text-xs text-text-muted">
                 {getTranslation(lang, 'travel_visited')}
               </span>
