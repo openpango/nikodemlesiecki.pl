@@ -26,7 +26,8 @@
     "react-simple-maps": "^3.0.0",
     "resend": "^6.12.4",
     "sanity": "^3.99.0",
-    "styled-components": "^6.4.2"
+    "styled-components": "^6.4.2",
+    "vercel": "^54.14.0"
   },
   "devDependencies": {
     "@types/node": "^20",
