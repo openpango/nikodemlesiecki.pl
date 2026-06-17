@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy-base: #090909;
+  --navy-surface: #141414;
+  --navy-secondary: #1D1D1D;
+  --red-primary: #FF5257;
+  --text-primary: #F2F1ED;
+  --text-muted: #8E8E8E;
+  --border-default: #2C2C2C;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--navy-base);
+  color: var(--text-primary);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(255, 82, 87, 0.3);
+  color: var(--text-primary);
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--red-primary);
+  outline-offset: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--navy-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Section spacing */
+@layer components {
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 xl:px-12;
+  }
+
+  .section-container {
+    @apply mx-auto max-w-7xl;
+  }
+
+  .section-spacing {
+    @apply py-20 md:py-28 lg:py-32;
+  }
+
+}

@@ -1,0 +1,42 @@
+{
+  "name": "nikodemlesiecki",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@react-pdf/renderer": "^4.5.1",
+    "@sanity/client": "^6.29.1",
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^3.99.0",
+    "@tabler/icons-react": "^3.44.0",
+    "@vercel/analytics": "^2.0.1",
+    "clsx": "^2.1.1",
+    "gsap": "^3.15.0",
+    "motion": "^12.40.0",
+    "next": "14.2.35",
+    "next-sanity": "^7.1.4",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-simple-maps": "^3.0.0",
+    "resend": "^6.12.4",
+    "sanity": "^3.99.0",
+    "styled-components": "^6.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/react-simple-maps": "^3.0.6",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
