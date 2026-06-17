@@ -59,12 +59,13 @@ const proficiencyConfig: Record<
   expert: { percent: 100, color: 'bg-red-primary', variant: 'expert' },
   advanced: { percent: 75, color: 'bg-text-primary', variant: 'advanced' },
   intermediate: { percent: 50, color: 'bg-text-muted', variant: 'intermediate' },
-  beginner: { percent: 25, color: 'bg-border-default', variant: 'beginner' },
+  beginner: { percent: 25, color: 'bg-white/30', variant: 'beginner' },
 };
 
 function getProficiency(level: string) {
+  const normalizedLevel = (level || '').toLowerCase() as ProficiencyLevel;
   return (
-    proficiencyConfig[level as ProficiencyLevel] ??
+    proficiencyConfig[normalizedLevel] ??
     proficiencyConfig.beginner
   );
 }
@@ -152,7 +153,7 @@ const Skills: React.FC<SkillsProps> = ({ skills }) => {
                       : { duration: 0.25, ease: 'easeOut' }
                   }
                 >
-                  <Card variant="compact" hover={false} className="h-full space-y-3">
+                  <Card variant="compact" hover={true} className="h-full space-y-3">
                     {/* Skill name + badge */}
                     <div className="flex items-start justify-between gap-3">
                       <span className="text-card-title text-text-primary">

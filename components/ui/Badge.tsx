@@ -29,13 +29,13 @@ interface BadgeProps {
 
 const variantClasses: Record<BadgeVariant, string> = {
   expert:
-    'bg-navy-surface text-text-primary border border-border-default',
+    'bg-text-primary/10 text-text-primary border border-text-primary/20',
   advanced:
-    'bg-navy-surface text-text-muted border border-border-default',
+    'bg-navy-surface text-text-primary border border-border-default',
   intermediate:
     'bg-transparent text-text-muted border border-border-default',
   beginner:
-    'bg-transparent text-border-default border border-border-default',
+    'bg-transparent text-text-muted/60 border border-border-default/50',
   status:
     'bg-transparent text-red-primary border border-red-primary/30',
   tech:

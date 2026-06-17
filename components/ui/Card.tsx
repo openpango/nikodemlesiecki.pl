@@ -26,7 +26,7 @@ const variantClasses: Record<CardVariant, string> = {
 };
 
 const baseClasses = [
-  'bg-navy-surface border border-border-default rounded-none',
+  'bg-navy-surface border border-white/10 rounded-none',
   'transition-all duration-300 ease-out relative overflow-hidden group',
 ].join(' ');
 
@@ -48,7 +48,7 @@ const Card = React.forwardRef<HTMLElement, CardProps>(function Card(
   const classes = [
     baseClasses,
     variantClasses[variant],
-    hover ? 'hover:border-text-muted hover:bg-navy-secondary hover:-translate-y-1' : '',
+    hover ? 'hover:border-white/30 hover:bg-[#1A1A1A] hover:-translate-y-1' : '',
     className,
   ]
     .filter(Boolean)
