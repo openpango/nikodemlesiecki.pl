@@ -44,7 +44,7 @@ function getFadeUpProps(delay: number, introStep: number, isHeroH1: boolean = fa
   return {
     initial: { opacity: 0, y: 24 },
     animate: isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
-    transition: { duration: 0.8, ease: 'easeOut', delay },
+    transition: { duration: 0.8, ease: 'easeOut' as const, delay },
   };
 }
 
