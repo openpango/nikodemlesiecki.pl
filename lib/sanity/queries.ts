@@ -44,7 +44,7 @@ export const featuredProjectQuery = groq`
 
 /** Fetch all locations, ordered by country name */
 export const locationsQuery = groq`
-  *[_type == "location"] | order(country.en asc) {
+  *[_type == "location"] | order(country.en asc) { // cache-bust
     _id,
     country,
     cityOrRegion,

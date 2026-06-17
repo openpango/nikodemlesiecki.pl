@@ -17,7 +17,7 @@ import {
 } from '@/lib/sanity/queries';
 import { Project, Location, Experience as ExperienceType, Skill, SiteSettings } from '@/lib/sanity/types';
 
-export const revalidate = 3600; // Revalidate every hour max if webhook fails
+export const revalidate = 60; // Revalidate every minute so Sanity updates show up quickly
 
 export default async function Home() {
   // Fetch data from Sanity with try/catch fallbacks
